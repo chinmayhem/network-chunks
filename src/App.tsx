@@ -1,13 +1,15 @@
 import React, { useCallback } from 'react';
 import './App.css';
-import { useRawDumpQuery } from './hooks/useRawDumpQuery';
+import { useRawDumpQuery, loadOrigin } from './hooks/useRawDumpQuery';
 
 function App() {
   const { data, refetch, isLoading } = useRawDumpQuery();
 
   const deleteData = useCallback(async () => {
     await new Promise((resolve) => {
-      chrome.runtime.sendMessage({ type: "CLEAR" }, resolve);
+      loadOrigin().then(origin => {
+        chrome.runtime.sendMessage({ type: "CLEAR", payload: { origin } }, resolve)
+      })
     })
     refetch();
   }, [refetch]);

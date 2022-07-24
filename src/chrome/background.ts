@@ -1,27 +1,18 @@
 import {write} from './storageService';
 
-let urls = new Set<string>();
-let host = '';
+let originToUrls = new Map<string, Set<string>>();
 
 console.log('background loaded');
-
-chrome.tabs.query({
-    active: true,
-    currentWindow: true
-  }, function(tabs) {
-    var tab = tabs[0];
-    var url = tab.url;
-    const { host: tabHost } = new URL(url || '');
-    host = tabHost;
-  });
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     if(request) {
         if (request.type == "CLEAR") {
-            urls = new Set();
-            await write([], '');
+            originToUrls.set(request.payload.origin, new Set())
+            await write([], request.payload.origin);
             sendResponse({ type: 'CLEAR_SUCCESSFUL' });
             console.log('--------CLEARED--------');
+        } else if(request.type == "INITIALISE"){
+            originToUrls.set(request.payload.origin, new Set())
         }
     }
 });
@@ -29,10 +20,12 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
         const result = details.url.match(/_next\/static\/chunks\/([a-zA-Z-]*)\./)?.[1];
-        if(result) {
+        const origin = (details.initiator || 'INITIATOR');
+        const urls = originToUrls.get(origin);
+        if(result && urls) {
             console.log(result);
             urls.add(result);
-            write([...urls], '');
+            write([...urls], origin);
         }
     },
     {urls: ["*://*.sprinklr.com/*"]}

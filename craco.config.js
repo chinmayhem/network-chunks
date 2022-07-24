@@ -1,7 +1,17 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+
 module.exports = {
   webpack: {
     configure: (webpackConfig, { env, paths }) => {
       console.log(webpackConfig);
+      const htmlWebpackPluginInstance = webpackConfig.plugins.find(
+        webpackPlugin => webpackPlugin instanceof HtmlWebpackPlugin
+      );
+      if (htmlWebpackPluginInstance) {
+        htmlWebpackPluginInstance.options.excludeChunks = ['content', 'background'];
+      }
+      
       return {
         ...webpackConfig,
         entry: {
@@ -21,7 +31,7 @@ module.exports = {
           ...webpackConfig.optimization,
           minimize: false,
           runtimeChunk: false,
-        },
+        }
       };
     },
   },
