@@ -1,32 +1,39 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import './App.css';
 import { useRawDumpQuery, loadOrigin } from './hooks/useRawDumpQuery';
+import Header from './components/Header/Header';
+import Chunks from './components/Chunks/Chunks';
 
 function App() {
   const { data, refetch, isLoading } = useRawDumpQuery();
+  const [origin, setOrigin] = useState<null | string>(null);
 
   const deleteData = useCallback(async () => {
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       loadOrigin().then(origin => {
-        chrome.runtime.sendMessage({ type: "CLEAR", payload: { origin } }, resolve)
-      })
-    })
+        chrome.runtime.sendMessage(
+          { type: 'CLEAR', payload: { origin } },
+          resolve
+        );
+      });
+    });
     refetch();
   }, [refetch]);
 
-  const copyData = useCallback( () => {
-    navigator.clipboard.writeText(data.join(','))
+  const copyData = useCallback(() => {
+    navigator.clipboard.writeText(data.join(','));
   }, [data]);
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
 
   return (
     <div className="App">
-      <div style={{display: 'flex'}}>
-        <button onClick={data ? copyData : undefined}>COPY</button>
-        <button style={{marginLeft: 'auto'}} onClick={deleteData}>DELETE</button>
+      <Header origin={origin} />
+      <div className="container">
+        <Chunks chunks={data} copyData={copyData} deleteData={deleteData} />
       </div>
-      {data ? <pre style={{fontSize: '16px'}}>
-        {JSON.stringify(data, null, 2)}
-      </pre> : null}
     </div>
   );
 }

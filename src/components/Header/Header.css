@@ -1,0 +1,23 @@
+#header {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 1em;
+  background: #ffffff1f;
+}
+
+#header img {
+  width: 5em;
+}
+
+#header-text {
+  width: calc(100% - 7em);
+}
+
+#header-text h3 {
+  margin-block-end: 0em;
+  margin-block-start: 0em;
+}
