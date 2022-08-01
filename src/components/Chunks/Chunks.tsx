@@ -28,8 +28,8 @@ export default function Chunks(props: ChunksProps) {
       <div className="card-header">
         <h3>Chunks</h3>
         <div className="button-group">
-          <button onClick={copyData}>📋 COPY</button>
-          <button onClick={deleteData}>🗑 DELETE</button>
+          <button onClick={copyData}>Copy</button>
+          <button onClick={deleteData}>Delete</button>
         </div>
       </div>
       <div className="chunks-container">{chunkChips}</div>

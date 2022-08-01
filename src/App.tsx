@@ -25,7 +25,7 @@ function App() {
   }, [data]);
 
   useEffect(() => {
-    setOrigin(window.location.origin);
+    loadOrigin().then((origin) => setOrigin(origin))
   }, []);
 
   return (
