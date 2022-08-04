@@ -1,6 +1,6 @@
 {
   "name": "Network Chunks",
-  "description": "Track the chunks",
+  "description": "Track the chunks fetched over the Network",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
